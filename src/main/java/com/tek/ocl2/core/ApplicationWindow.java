@@ -181,6 +181,14 @@ public class ApplicationWindow {
 		});
 		
 		status_timer.start();
+		
+		//Add close listener
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        starter.endOrigin();
+		    }
+		});
 	}
 	
 	public void reloadVersions() {
