@@ -32,7 +32,7 @@ public class OriginApi {
 				
 				i++;
 			}
-		}catch(Exception e) { }
+		}catch(Exception e) {}
 		
 		return pools;
 	}
@@ -44,7 +44,7 @@ public class OriginApi {
 			long height = Long.parseLong(json.getString("mimpvehost_height"));
 			
 			return height;
-		}catch(Exception e) { }
+		}catch(Exception e) {}
 		
 		return -1;
 	}
@@ -59,7 +59,7 @@ public class OriginApi {
 			if(state != null) {
 				return state;
 			}
-		}catch(Exception e) { }
+		}catch(Exception e) {}
 		
 		return State.DOWN;
 	}
@@ -73,15 +73,18 @@ public class OriginApi {
 	    return sb.toString();
 	}
 	
-	private static JSONObject readJsonFromUrl(String url) throws Exception {
-	    InputStream is = new URL(url).openStream();
+	private static JSONObject readJsonFromUrl(String url) throws Exception{
+	    InputStream is = null;
+	    
+		is = new URL(url).openStream();
+		
 	    try {
 	        BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 	        String jsonText = readAll(rd);
 	        JSONObject json = new JSONObject(jsonText);
 	        return json;
 	    } finally {
-	        is.close();
+		    is.close();
 	    }
     }
 	

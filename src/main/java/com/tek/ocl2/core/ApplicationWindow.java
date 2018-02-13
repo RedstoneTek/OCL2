@@ -13,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -28,22 +29,23 @@ import com.tek.ocl2.core.lib.OriginPool;
 
 public class ApplicationWindow {
 
+	private static ApplicationWindow instance;
 	private JFrame frame;
-	
 	private OriginStarter starter;
 	
 	private JComboBox<OriginVersion> loadedVersions_combo;
 	private JButton reloadVersions_btn;
+	private JButton close_btn;
 	private JLabel pools_lbl;
-	private JList<OriginPool> pools_list;
-	private DefaultListModel<OriginPool> pools_model;
 	private JLabel relay_lbl;
 	private JLabel origin_lbl;
+	private JList<OriginPool> pools_list;
+	private DefaultListModel<OriginPool> pools_model;
 	private JRadioButton regular_rd;
 	private JRadioButton pool_rd;
 	private JRadioButton poolhost_rd;
 	private JCheckBox full_chckbx;
-	private JButton close_btn;
+	private JCheckBox data_chckbx;
 	
 	public ApplicationWindow() {
 		initialize();
@@ -58,12 +60,15 @@ public class ApplicationWindow {
 		frame.setTitle("Origin Crypto-Launcher 2.0");
 		frame.getContentPane().setLayout(null);
 		
+		//Register instance
+		instance = this;
+		
 		//Change look and feel
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 		} catch (Exception e) { }
 		
-		//Initialise OriginStarter
+		//Initialise Managers
 		starter = new OriginStarter();
 		
 		//Load UI Components
@@ -101,7 +106,7 @@ public class ApplicationWindow {
 		frame.getContentPane().add(pools_list);
 		
 		JScrollPane pools_scroll = new JScrollPane(pools_list);
-		pools_scroll.setBounds(336, 39, 180, 210);
+		pools_scroll.setBounds(336, 39, 180, 190);
 		frame.getContentPane().add(pools_scroll);
 		
 		regular_rd = new JRadioButton("Regular Mode");
@@ -123,8 +128,14 @@ public class ApplicationWindow {
 		mode_group.add(poolhost_rd);
 		
 		full_chckbx = new JCheckBox("Full Mode");
-		full_chckbx.setBounds(217, 177, 97, 23);
+		full_chckbx.setBounds(217, 163, 97, 23);
 		frame.getContentPane().add(full_chckbx);
+		
+		data_chckbx = new JCheckBox("Collect Anonymous Data");
+		data_chckbx.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		data_chckbx.setHorizontalAlignment(SwingConstants.LEFT);
+		data_chckbx.setBounds(336, 232, 142, 23);
+		frame.getContentPane().add(data_chckbx);
 		
 		reloadVersions_btn = new JButton("Reload Versions");
 		reloadVersions_btn.addActionListener(new ActionListener() {
@@ -158,6 +169,15 @@ public class ApplicationWindow {
 		});
 		close_btn.setBounds(10, 111, 201, 23);
 		frame.getContentPane().add(close_btn);
+	    
+		JButton datahelp_btn = new JButton("?");
+		datahelp_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "If you check this, it will make development for the launcher faster as I can get errors from users and thus fix bugs quicker. I do not collect any data about the mining itself.");
+			}
+		});
+		datahelp_btn.setBounds(479, 232, 37, 23);
+		frame.getContentPane().add(datahelp_btn);
 		
 		//Show UI
 		frame.setVisible(true);
@@ -210,5 +230,17 @@ public class ApplicationWindow {
 	public void updateStatus() {
 		relay_lbl.setText("Relay Status: " + OriginApi.getRelayStatus().translate.toUpperCase());
     	origin_lbl.setText("Origin Height: " + OriginApi.getHeight());
+	}
+	
+	public boolean isAnonymousDataChecked() {
+		return data_chckbx.isSelected();
+	}
+	
+	public OriginStarter getOriginStarter() {
+		return this.starter;
+	}
+	
+	public static ApplicationWindow inst() {
+		return instance;
 	}
 }
