@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import com.tek.ocl2.core.ApplicationWindow;
 import com.tek.ocl2.core.detection.OriginVersion;
 
 public class OriginStarter {
@@ -44,7 +45,7 @@ public class OriginStarter {
 									line = reader.readLine();
 								} catch (IOException e) { }
 								
-								if(line != null) System.out.println(line);
+								if(line != null) ApplicationWindow.inst().print(line);
 							}
 						}
 					}

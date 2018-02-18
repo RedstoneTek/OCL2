@@ -10,6 +10,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import com.tek.ocl2.core.lib.OriginPool.State;
 
@@ -35,6 +38,53 @@ public class OriginApi {
 		}catch(Exception e) {}
 		
 		return pools;
+	}
+	
+	public static ArrayList<FAQ> getFaqs(){
+		ArrayList<FAQ> faqs = new ArrayList<FAQ>();
+		
+		String url = "https://bitbucket.org/backspace119/ki-project-origin/wiki/FAQ";
+		
+		try {
+			Document doc = Jsoup.connect(url).timeout(2500).get();
+			
+			Element content = doc.getElementById("wiki-content");
+			
+			for(Element p : content.getElementsByTag("p")) {
+				FAQ faq = new FAQ(p);
+				
+				if(faq.valid()) {
+					faqs.add(faq);
+				}
+			}
+		}catch(Exception e) {}
+		
+		return faqs;
+	}
+	
+	public static String getLatestVersion() {
+		try {
+			Document doc = Jsoup.connect("https://bitbucket.org/backspace119/ki-project-origin/downloads/").timeout(1000).get();
+			
+			for(Element element : doc.getElementsByTag("a")) {
+				if(element.className().equals("execute")) {
+					String href = element.attr("href");
+					
+					if(href != null && !href.isEmpty()) {
+						if(href.endsWith(".jar")) {
+							String[] tokens = href.split("/");
+							String version = tokens[tokens.length - 1];
+							
+							return version.substring(7, version.length() - 11);
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			return "NA";
+		}
+		
+		return "NA";
 	}
 	
 	public static long getHeight(){
